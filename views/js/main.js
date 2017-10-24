@@ -522,19 +522,7 @@ function updatePositions() {
 }
 
 // runs updatePositions on scroll
-var last_known_scroll_position = 0;
-var ticking = false;
-
-window.addEventListener('scroll', function(e) {
-  last_known_scroll_position = window.scrollY;
-  if (!ticking) {
-    window.requestAnimationFrame(function() {
-      updatePositions();
-      ticking = false;
-    });
-  }
-  ticking = true;
-});
+window.addEventListener('scroll', updatePositions);
 
 // Generates the sliding pizzas when the page loads.
 document.addEventListener('DOMContentLoaded', function() {
