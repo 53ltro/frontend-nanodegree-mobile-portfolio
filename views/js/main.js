@@ -491,7 +491,7 @@ function logAverageFrame(times) {   // times is the array of User Timing measure
   for (var i = numberOfEntries - 1; i > numberOfEntries - 11; i--) {
     sum = sum + times[i].duration;
   }
-  console.log("Average time to generate last 10 frames: " + sum / 10 + "ms");
+  console.log("Average scripting time to generate last 10 frames: " + sum / 10 + "ms");
 }
 
 // The following code for sliding background pizzas was pulled from Ilya's demo found at:
@@ -502,16 +502,12 @@ function updatePositions() {
   frame++;
   window.performance.mark("mark_start_frame");
 
-  //Changed to select the moving pizzas element by class name, although this may not be supported by older browsers.
-  var items = document.getElementsByClassName('mover');
-  //Moved the phase calculation into its own for loop that appends each phase to an array, rather than declaring and setting the phase variable each time.
-  phaseList = [];
-  for (var j = 0; j < 5; j++){
-    phaseList.push(Math.sin((document.body.scrollTop / 1250) + (j % 5)));
-  }
-  //The pizza item styles are changed by accessing the relevant element of the phaseList array, rather than resuing the phase variable.
+  var items = document.querySelectorAll('.mover');
   for (var i = 0; i < items.length; i++) {
-    items[i].style.left = items[i].basicLeft + 100 * phaseList[(i % 5)] + 'px';
+    // document.body.scrollTop is no longer supported in Chrome.
+    var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+    var phase = Math.sin((scrollTop / 1250) + (i % 5));
+    items[i].style.left = items[i].basicLeft + 100 * phase + 'px';
   }
 
   // User Timing API to the rescue again. Seriously, it's worth learning.
@@ -531,12 +527,7 @@ window.addEventListener('scroll', updatePositions);
 document.addEventListener('DOMContentLoaded', function() {
   var cols = 8;
   var s = 256;
-  //Changed the number of pizzas generated to be based on the window height.
-  var rows = Math.round(window.screen.height / s);
-  var pizzaCount = rows * cols;
-  //Changed querySelector call to getElementById, saved this DOM call to local variable, movingPizzas, outside of the for loop.
-  var movingPizzas = document.getElementById("movingPizzas1");
-  for (var i = 0; i < pizzaCount; i++) {
+  for (var i = 0; i < 200; i++) {
     var elem = document.createElement('img');
     elem.className = 'mover';
     elem.src = "images/pizza.png";
@@ -544,7 +535,7 @@ document.addEventListener('DOMContentLoaded', function() {
     elem.style.width = "73.333px";
     elem.basicLeft = (i % cols) * s;
     elem.style.top = (Math.floor(i / cols) * s) + 'px';
-    movingPizzas.appendChild(elem);
+    document.querySelector("#movingPizzas1").appendChild(elem);
   }
   updatePositions();
 });
