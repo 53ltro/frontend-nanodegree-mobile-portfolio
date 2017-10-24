@@ -553,5 +553,4 @@ document.addEventListener('DOMContentLoaded', function() {
     pizzaDiv.appendChild(elem);
   }
   updatePositions();
-});ePositions();
 });
